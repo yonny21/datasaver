@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="am" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DATA SAVER - የኢንተርኔት ወጪዎን ይቀንሱ</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'ethiopic': ['"Noto Sans Ethiopic"', 'sans-serif'],
+                    },
+                    colors: {
+                        neon: {
+                            cyan: '#00f3ff',
+                            blue: '#0066ff',
+                            green: '#39ff14',
+                            red: '#ff003c',
+                            purple: '#bc13fe'
+                        },
+                        dark: {
+                            bg: '#050b14',
+                            surface: '#0a192f',
+                            card: 'rgba(10, 25, 47, 0.7)'
+                        }
+                    },
+                    backgroundImage: {
+                        'tech-grid': 'linear-gradient(rgba(0, 243, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 243, 255, 0.1) 1px, transparent 1px)',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Noto Sans Ethiopic', sans-serif;
+            background-color: #050b14;
+            color: #e2e8f0;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(0, 102, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(0, 243, 255, 0.15) 0%, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        /* Tech Grid Background overlay */
+        .bg-grid-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Glowing Text */
+        .glow-text-cyan {
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.7), 0 0 20px rgba(0, 243, 255, 0.5);
+        }
+        .glow-text-green {
+            text-shadow: 0 0 10px rgba(57, 255, 20, 0.7), 0 0 20px rgba(57, 255, 20, 0.5);
+        }
+        .glow-text-red {
+            text-shadow: 0 0 10px rgba(255, 0, 60, 0.7), 0 0 20px rgba(255, 0, 60, 0.5);
+        }
+
+        /* Neon Button Styling */
+        .btn-neon {
+            background: linear-gradient(45deg, #0066ff, #00f3ff);
+            color: white;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.5), 0 0 30px rgba(0, 102, 255, 0.3);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 243, 255, 0.8);
+        }
+        .btn-neon:hover {
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.8), 0 0 50px rgba(0, 102, 255, 0.6);
+            transform: translateY(-2px);
+            text-shadow: 0 0 5px white;
+        }
+        .btn-neon::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; w: 100%; h: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s ease;
+            z-index: -1;
+        }
+        .btn-neon:hover::before {
+            left: 100%;
+        }
+
+        /* Glassmorphism Cards */
+        .glass-card {
+            background: rgba(10, 25, 47, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            box-shadow: inset 0 0 20px rgba(0, 243, 255, 0.05), 0 8px 32px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 243, 255, 0.6);
+            box-shadow: inset 0 0 20px rgba(0, 243, 255, 0.1), 0 8px 32px rgba(0, 243, 255, 0.15);
+        }
+
+        /* Animations */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-up {
+            animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+        }
+        
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 10px rgba(0, 243, 255, 0.5), 0 0 20px rgba(0, 102, 255, 0.3); transform: scale(1); }
+            50% { box-shadow: 0 0 25px rgba(0, 243, 255, 0.8), 0 0 40px rgba(0, 102, 255, 0.6); transform: scale(1.02); }
+            100% { box-shadow: 0 0 10px rgba(0, 243, 255, 0.5), 0 0 20px rgba(0, 102, 255, 0.3); transform: scale(1); }
+        }
+        .animate-pulse-glow {
+            animation: pulseGlow 2s infinite;
+        }
+
+        /* Live Feed Animations */
+        .feed-item {
+            animation: slideInRight 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards, fadeOutUp 0.5s ease-in 4s forwards;
+            opacity: 0;
+            transform-origin: top right;
+        }
+        @keyframes slideInRight {
+            from { transform: translateX(120%) scale(0.9); opacity: 0; }
+            to { transform: translateX(0) scale(1); opacity: 1; }
+        }
+        @keyframes fadeOutUp {
+            from { transform: translateY(0) scale(1); opacity: 1; filter: blur(0px); }
+            to { transform: translateY(-30px) scale(0.9); opacity: 0; filter: blur(4px); }
+        }
+        
+        /* Specific Gauge Transitions */
+        #gaugeNeedle {
+            transition: transform 2.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        /* Floating particles */
+        .particle {
+            position: absolute;
+            background: #00f3ff;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.5;
+            animation: floatParticle 10s infinite linear;
+        }
+        @keyframes floatParticle {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 0.8; box-shadow: 0 0 10px #00f3ff; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(-100vh) translateX(50px); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="relative min-h-screen pb-32">
+    <div class="bg-grid-overlay"></div>
+    
+    <!-- Particles generator -->
+    <div id="particles" class="fixed inset-0 pointer-events-none z-0 overflow-hidden"></div>
+
+    <header class="sticky top-0 z-40 bg-dark-bg/80 backdrop-blur-md border-b border-neon-cyan/20 shadow-[0_4px_30px_rgba(0,243,255,0.1)]">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="font-black text-2xl tracking-tighter flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan to-white glow-text-cyan">
+                <i class="fa-solid fa-microchip text-neon-cyan"></i> DATA SAVER
+            </div>
+            <div class="hidden md:flex gap-4 items-center">
+                <span class="text-xs text-neon-cyan/70 font-mono"><i class="fa-solid fa-circle text-[8px] animate-pulse text-neon-green"></i> SYSTEM ONLINE</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="relative z-10 max-w-5xl mx-auto px-4 pt-12 pb-8">
+        
+        <section class="text-center animate-fade-up relative">
+            <!-- Decorative Tech elements -->
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[300px] h-[300px] bg-neon-blue/20 rounded-full blur-[100px] -z-10"></div>
+            
+            <div class="inline-flex items-center gap-2 bg-neon-cyan/10 border border-neon-cyan/30 text-neon-cyan px-4 py-1.5 rounded-full text-xs font-bold mb-6 font-mono tracking-wider shadow-[0_0_10px_rgba(0,243,255,0.2)]">
+                <i class="fa-solid fa-bolt"></i> V2.0 ALGORITHM ACTIVE
+            </div>
+            
+            <h1 class="text-4xl md:text-6xl lg:text-7xl font-black leading-tight mb-6 text-white drop-shadow-2xl">
+                DATA SAVER አፕሊኬሽንን ይጠቀሙና የኢንተርኔት ወጪዎን በ <br class="hidden md:block">
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-neon-green to-neon-cyan glow-text-green text-6xl md:text-8xl">75%</span> 
+                በቀላሉ ይቀንሱ።<br>
+                <span class="text-2xl md:text-4xl text-gray-300 mt-4 block font-bold">ለውጡን በራስዎ ይመልከቱ!</span>
+            </h1>
+            
+            <p class="text-gray-400 mb-10 text-lg md:text-xl max-w-2xl mx-auto font-medium">
+                የላቀ ቴክኖሎጂን በመጠቀም ዩቲዩብ፣ ቲክቶክ፣ እና ቴሌግራም ሲጠቀሙ የሚባክነውን ዳታ ያስቁሙ።
+            </p>
+
+            <!-- Top CTA -->
+            <div class="flex justify-center">
+                <a href="http://addismobileapps.com/sms.html" class="btn-neon animate-pulse-glow inline-flex items-center justify-center gap-3 font-black text-xl md:text-2xl px-10 py-5 rounded-xl w-full md:w-auto uppercase tracking-wide">
+                    <i class="fa-solid fa-download text-2xl"></i>
+                    አሁኑኑ ያውርዱ
+                </a>
+            </div>
+        </section>
+
+        <section class="mt-20 mb-20 animate-fade-up" style="animation-delay: 0.2s;">
+            <div class="glass-card rounded-3xl p-8 relative overflow-hidden text-center max-w-3xl mx-auto">
+                <!-- HUD Overlays -->
+                <div class="absolute top-4 left-4 text-[10px] font-mono text-neon-cyan/50 text-left">
+                    SYS.MONITORING<br>
+                    TARGET: OPTIMAL
+                </div>
+                <div class="absolute top-4 right-4 text-[10px] font-mono text-neon-cyan/50 text-right">
+                    PROTOCOL: ALPHA<br>
+                    STATUS: <span id="gaugeStatusText" class="text-neon-red">CRITICAL</span>
+                </div>
+
+                <h2 class="text-2xl font-bold mb-8 text-white tracking-wide glow-text-cyan">የዳታ ፍጆታ ትንተና</h2>
+                
+                <!-- SVG Gauge -->
+                <div class="relative w-full max-w-md mx-auto aspect-[2/1]">
+                    <svg viewBox="0 0 200 110" class="w-full h-full drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+                        <defs>
+                            <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#ff003c" /> <!-- Red -->
+                                <stop offset="40%" stop-color="#ffaa00" /> <!-- Yellow -->
+                                <stop offset="100%" stop-color="#39ff14" /> <!-- Green -->
+                            </linearGradient>
+                            <filter id="glow">
+                                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        
+                        <!-- Background track -->
+                        <path d="M 20 90 A 80 80 0 0 1 180 90" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="16" stroke-linecap="round"/>
+                        
+                        <!-- Active colored track -->
+                        <path d="M 20 90 A 80 80 0 0 1 180 90" fill="none" stroke="url(#gaugeGradient)" stroke-width="16" stroke-linecap="round" filter="url(#glow)"/>
+                        
+                        <!-- Measurement ticks -->
+                        <g stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-linecap="round">
+                            <line x1="30" y1="80" x2="36" y2="76" />
+                            <line x1="50" y1="45" x2="55" y2="48" />
+                            <line x1="100" y1="20" x2="100" y2="28" />
+                            <line x1="150" y1="45" x2="145" y2="48" />
+                            <line x1="170" y1="80" x2="164" y2="76" />
+                        </g>
+
+                        <!-- Needle (Rotates around 100, 90) -->
+                        <g id="gaugeNeedle" transform="rotate(-70, 100, 90)">
+                            <polygon points="98,90 102,90 100,25" fill="#ffffff" filter="url(#glow)"/>
+                            <circle cx="100" cy="90" r="6" fill="#00f3ff" stroke="#050b14" stroke-width="2"/>
+                            <!-- Needle trail/glow -->
+                            <polygon points="99,90 101,90 100,30" fill="rgba(0, 243, 255, 0.5)"/>
+                        </g>
+                    </svg>
+
+                    <!-- Overlay Number -->
+                    <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/4 text-center">
+                        <div id="gaugeNumber" class="text-5xl font-black text-white font-mono tracking-tighter drop-shadow-[0_0_10px_rgba(255,0,60,0.8)]">0%</div>
+                        <div class="text-[10px] text-neon-cyan uppercase font-mono mt-1 tracking-widest">Saved Data</div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center max-w-sm mx-auto mt-10 px-4 font-mono text-xs md:text-sm">
+                    <div id="statusRed" class="text-neon-red flex items-center gap-2 opacity-100 transition-opacity duration-500 glow-text-red">
+                        <i class="fa-solid fa-triangle-exclamation animate-pulse"></i> ከፍተኛ ብክነት
+                    </div>
+                    <div id="statusGreen" class="text-neon-green flex items-center gap-2 opacity-20 transition-opacity duration-500">
+                        <i class="fa-solid fa-shield-check"></i> ከፍተኛ ቁጠባ
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="text-center mb-24 animate-fade-up" style="animation-delay: 0.4s;">
+            <div class="w-full h-[1px] bg-gradient-to-r from-transparent via-neon-cyan to-transparent opacity-30 mb-12"></div>
+            <h2 class="text-3xl font-black mb-8 text-white">ዳታዎ እያለቀ ተቸግረዋል?</h2>
+            <a href="http://addismobileapps.com/sms.html" class="btn-neon inline-flex items-center justify-center gap-3 font-bold text-xl px-8 py-4 rounded-xl shadow-xl w-full md:w-auto">
+                <i class="fa-solid fa-cloud-arrow-down text-2xl"></i>
+                አሁኑኑ ያውርዱ
+            </a>
+            <div class="w-full h-[1px] bg-gradient-to-r from-transparent via-neon-cyan to-transparent opacity-30 mt-12"></div>
+        </section>
+
+        <section class="mb-10 animate-fade-up" style="animation-delay: 0.6s;">
+            <h2 class="text-3xl font-black text-center mb-12 text-white glow-text-cyan tracking-wide">ተጠቃሚዎች ምን ይላሉ?</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="glass-card p-6 rounded-2xl relative group">
+                    <div class="absolute -top-4 -left-4 w-10 h-10 bg-neon-blue rounded-full flex items-center justify-center text-white shadow-[0_0_15px_#0066ff] transform group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-quote-left text-sm"></i>
+                    </div>
+                    <div class="flex gap-1 text-neon-cyan text-xs mb-4 mt-2 justify-end">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-gray-300 mb-6 text-sm leading-relaxed border-l-2 border-neon-blue pl-3">"በጣም ገራሚ ቴክኖሎጂ ነው! ዳታዬን በከፍተኛ ሁኔታ ቆጥቦልኛል። ቪዲዮዎችን ያለ ስጋት ማየት ጀምሪያለሁ።"</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-neon-blue to-neon-purple flex items-center justify-center text-white font-bold text-lg border border-white/20">ዮ</div>
+                        <div>
+                            <h4 class="font-bold text-white text-sm">ዮናስ ተፈራ</h4>
+                            <span class="text-[10px] text-neon-cyan/70 font-mono">VERIFIED USER</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="glass-card p-6 rounded-2xl relative group">
+                    <div class="absolute -top-4 -left-4 w-10 h-10 bg-neon-cyan rounded-full flex items-center justify-center text-gray-900 shadow-[0_0_15px_#00f3ff] transform group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-quote-left text-sm"></i>
+                    </div>
+                    <div class="flex gap-1 text-neon-cyan text-xs mb-4 mt-2 justify-end">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+                    </div>
+                    <p class="text-gray-300 mb-6 text-sm leading-relaxed border-l-2 border-neon-cyan pl-3">"የኢንተርኔት ወጪዬ ላይ ትልቅ ለውጥ አይቻለሁ። ዳታ ሴቨርን ከተጠቀምኩ በኋላ የካርድ ወጪዬ በግማሽ ቀንሷል።"</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-neon-cyan to-blue-400 flex items-center justify-center text-gray-900 font-bold text-lg border border-white/20">ሳ</div>
+                        <div>
+                            <h4 class="font-bold text-white text-sm">ሳምራዊት አበበ</h4>
+                            <span class="text-[10px] text-neon-cyan/70 font-mono">VERIFIED USER</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="glass-card p-6 rounded-2xl relative group">
+                    <div class="absolute -top-4 -left-4 w-10 h-10 bg-neon-green rounded-full flex items-center justify-center text-gray-900 shadow-[0_0_15px_#39ff14] transform group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-quote-left text-sm"></i>
+                    </div>
+                    <div class="flex gap-1 text-neon-cyan text-xs mb-4 mt-2 justify-end">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-gray-300 mb-6 text-sm leading-relaxed border-l-2 border-neon-green pl-3">"ለማመን ይከብዳል፣ ግን 75% ዳታዬን አድኖልኛል። ለሁሉም ጓደኞቼ እመክራለሁ! እጅግ በጣም ፈጣን ነው።"</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-neon-green to-teal-400 flex items-center justify-center text-gray-900 font-bold text-lg border border-white/20">ዳ</div>
+                        <div>
+                            <h4 class="font-bold text-white text-sm">ዳዊት ሰለሞን</h4>
+                            <span class="text-[10px] text-neon-cyan/70 font-mono">VERIFIED USER</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Bottom inline CTA -->
+        <section class="text-center py-12 animate-fade-up" style="animation-delay: 0.8s;">
+             <a href="http://addismobileapps.com/sms.html" class="btn-neon inline-flex items-center justify-center gap-3 font-bold text-lg px-8 py-3 rounded-lg shadow-xl">
+                አሁኑኑ ያውርዱ
+            </a>
+        </section>
+    </main>
+
+    <div id="liveFeedContainer" class="fixed top-24 right-4 z-50 flex flex-col gap-3 max-w-[280px] w-full pointer-events-none">
+        <!-- JS dynamically injects feed items here -->
+    </div>
+
+    <div class="fixed bottom-0 left-0 w-full bg-dark-bg/90 backdrop-blur-xl border-t border-neon-cyan/30 p-4 shadow-[0_-10px_30px_rgba(0,243,255,0.15)] z-50 flex justify-center items-center">
+        <a href="http://addismobileapps.com/sms.html" class="btn-neon animate-pulse-glow flex items-center justify-center gap-3 font-black text-xl md:text-2xl py-4 px-8 rounded-xl shadow-[0_0_20px_rgba(0,243,255,0.4)] w-full max-w-3xl border-2 border-neon-cyan">
+            <i class="fa-solid fa-rocket text-2xl"></i> አሁኑኑ ያውርዱ
+        </a>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            
+            // 1. Tech Background Particles Logic
+            const particlesContainer = document.getElementById('particles');
+            for(let i=0; i<30; i++) {
+                let particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Randomize size, position, delay
+                let size = Math.random() * 4 + 1;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${Math.random() * 100}vw`;
+                particle.style.bottom = `-10px`;
+                particle.style.animationDelay = `${Math.random() * 10}s`;
+                particle.style.animationDuration = `${10 + Math.random() * 10}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+
+            // 2. High-Tech Gauge Animation Logic
+            const needle = document.getElementById('gaugeNeedle');
+            const gaugeNum = document.getElementById('gaugeNumber');
+            const statusRed = document.getElementById('statusRed');
+            const statusGreen = document.getElementById('statusGreen');
+            const sysStatus = document.getElementById('gaugeStatusText');
+            
+            let targetSavePercent = 75; 
+            
+            // Start sequence
+            setTimeout(() => {
+                // Jitter logic (simulating analyzing wastage)
+                let jitterCount = 0;
+                let jitterInterval = setInterval(() => {
+                    let randomAngle = -70 + (Math.random() * 15 - 7.5); // Around -70 (red zone)
+                    needle.style.transition = 'transform 0.1s linear';
+                    needle.style.transform = `rotate(${randomAngle}deg)`;
+                    
+                    gaugeNum.innerText = Math.floor(Math.random() * 10) + '%';
+                    
+                    jitterCount++;
+                    if(jitterCount > 15) {
+                        clearInterval(jitterInterval);
+                        startSavingSequence();
+                    }
+                }, 100);
+            }, 1000);
+
+            function startSavingSequence() {
+                // Set smooth transition
+                needle.style.transition = 'transform 2.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                
+                // Calculate target angle based on 75%
+                // Range: -70 (0%) to 70 (100%) = 140 degrees total
+                // 75% = -70 + (140 * 0.75) = -70 + 105 = 35 degrees
+                const targetAngle = -70 + (140 * (targetSavePercent / 100));
+                
+                needle.style.transform = `rotate(${targetAngle}deg)`;
+                
+                // Update UI text and glows
+                statusRed.classList.remove('opacity-100', 'glow-text-red');
+                statusRed.classList.add('opacity-20');
+                
+                statusGreen.classList.remove('opacity-20');
+                statusGreen.classList.add('opacity-100', 'glow-text-green');
+                
+                sysStatus.innerText = 'OPTIMIZED';
+                sysStatus.className = 'text-neon-green glow-text-green';
+                
+                // Number Counter animation
+                let startTime = null;
+                const duration = 2500;
+                
+                function updateCounter(timestamp) {
+                    if (!startTime) startTime = timestamp;
+                    const progress = timestamp - startTime;
+                    const percent = Math.min(progress / duration, 1);
+                    
+                    // Ease out expo formula for number
+                    const easeProgress = percent === 1 ? 1 : 1 - Math.pow(2, -10 * percent);
+                    const currentVal = Math.floor(easeProgress * targetSavePercent);
+                    
+                    gaugeNum.innerText = currentVal + '%';
+                    
+                    // Change number color based on progress
+                    if (currentVal > 50) {
+                        gaugeNum.className = 'text-5xl font-black text-neon-green font-mono tracking-tighter drop-shadow-[0_0_15px_rgba(57,255,20,0.8)] glow-text-green';
+                    } else if (currentVal > 25) {
+                        gaugeNum.className = 'text-5xl font-black text-yellow-400 font-mono tracking-tighter drop-shadow-[0_0_15px_rgba(255,234,0,0.8)]';
+                    }
+
+                    if (progress < duration) {
+                        window.requestAnimationFrame(updateCounter);
+                    } else {
+                        gaugeNum.innerText = targetSavePercent + '%';
+                    }
+                }
+                window.requestAnimationFrame(updateCounter);
+            }
+
+            // 3. Live User Feed Logic
+            const feedContainer = document.getElementById('liveFeedContainer');
+            const prefixes = ['0911', '0912', '0913', '0922', '0933', '0944', '0977', '0988', '0711', '0799'];
+            
+            function createFeedItem() {
+                const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+                const suffix = Math.floor(10 + Math.random() * 90); 
+                const phone = `${prefix}****${suffix}`;
+                const savePercent = Math.floor(50 + Math.random() * 31); // 50 to 80
+                
+                const item = document.createElement('div');
+                item.className = 'feed-item glass-card p-3 rounded-lg flex items-center gap-3 border-l-4 border-l-neon-green shadow-lg';
+                item.innerHTML = `
+                    <div class="bg-neon-green/20 text-neon-green rounded-full w-8 h-8 flex items-center justify-center shrink-0 border border-neon-green/50 shadow-[0_0_10px_rgba(57,255,20,0.4)]">
+                        <i class="fa-solid fa-arrow-trend-down text-sm"></i>
+                    </div>
+                    <div class="text-sm font-bold text-white leading-tight font-mono">
+                        ${phone}<br>
+                        <span class="text-[11px] font-normal text-gray-400 font-sans">ዳታ ፍጆታን <span class="text-neon-green font-bold text-sm glow-text-green">${savePercent}%</span> ቀንሰዋል</span>
+                    </div>
+                `;
+                
+                feedContainer.appendChild(item);
+                
+                // Remove after animation (4s total)
+                setTimeout(() => {
+                    if (feedContainer.contains(item)) {
+                        item.remove();
+                    }
+                }, 4500);
+            }
+
+            // Start feed ticker
+            setTimeout(() => {
+                createFeedItem();
+                setInterval(createFeedItem, 3000 + Math.random() * 2000); // Random interval between 3-5 seconds
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
